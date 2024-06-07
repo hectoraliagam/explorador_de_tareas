@@ -1,33 +1,33 @@
 print('BIENVENIDO AL EXPLORADOR DE TAREAS')
-cantidad_de_tareas = 0
 
 def leer_tareas():
     try:
-        with open("guardar_tareas.txt","r",encoding="UTF-8") as archivo:
+        with open("guardar_tareas.txt", "r", encoding="UTF-8") as archivo:
             tareas = archivo.read().strip().split("\n")
             return [tarea for tarea in tareas if tarea]
     except FileNotFoundError:
         return []
 
 def escribir_tareas(tareas):
-    with open("guardar_tareas.txt","w",encoding="UTF-8") as archivo:
+    with open("guardar_tareas.txt", "w", encoding="UTF-8") as archivo:
         archivo.write("\n".join(tareas) + "\n")
 
 def imprimir_tareas(tareas):
+    print("------------------")
     print(f"TIENES {len(tareas)} TAREAS:\n")
     for i, tarea in enumerate(tareas, start=1):
         print(f"TAREA {i}:\n{tarea}")
-        print("------------------")
 
 def verificar_tareas():
     tareas = leer_tareas()
-    if len(tareas) == 0:
+    if not tareas:
         print("NO HAY TAREAS")
-        print("------------------")
     else:
-        print("------------------")
         imprimir_tareas(tareas)
 
+def opcion_invalida():
+    print("------------------")
+    print("OPCIÓN INVÁLIDA")
 
 while True:
     print(
@@ -38,8 +38,8 @@ while True:
         "Ingrese 4 para salir\n"
         "------------------"
     )
-    
-    try:    
+
+    try:
         opc = int(input(""))
 
         if opc == 1:
@@ -48,7 +48,7 @@ while True:
                 "INGRESE LA DESCRIPCIÓN DE LA TAREA\n"
                 "Cuando termine, presione enter e ingrese '//' para guardar la tarea\n"
                 "------------------"
-                )
+            )
             tarea = ""
             while True:
                 linea = input()
@@ -64,20 +64,27 @@ while True:
             verificar_tareas()
 
         elif opc == 3:
+            tareas = leer_tareas()
             verificar_tareas()
-            
-            num_tarea = int(input("Ingrese el número de la tarea que desea borrar: "))
-            if num_tarea < 1 or num_tarea > len(tareas):
-                print("NÚMERO DE TAREA INVÁLIDO")
-            else:
-                del tareas[num_tarea - 1]
-                escribir_tareas(tareas)
-                cantidad_de_tareas -= 1
-                print("TAREA BORRADA")
+            if tareas:
+                try:
+                    print("------------------")
+                    num_tarea = int(input("Ingrese el número de la tarea que desea borrar: "))
+                    if 1 <= num_tarea <= len(tareas):
+                        del tareas[num_tarea - 1]
+                        escribir_tareas(tareas)
+                        print("TAREA BORRADA")
+                    else:
+                        opcion_invalida()
+                except ValueError:
+                    opcion_invalida()
 
         elif opc == 4:
             print("CERRANDO PROGRAMA...")
             break
         
+        else:
+            opcion_invalida()
+        
     except ValueError:
-        print("OPCIÓN INVALIDA")
+        opcion_invalida()
